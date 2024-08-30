@@ -1,16 +1,12 @@
 package com.coding.project.uber.uberApp.dto;
 
-import org.locationtech.jts.geom.Point;
-
-import com.coding.project.uber.uberApp.enities.Rider;
+import java.time.LocalDateTime;
 import com.coding.project.uber.uberApp.enities.enums.PaymentMethod;
 import com.coding.project.uber.uberApp.enities.enums.RideRequestStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -19,16 +15,18 @@ public class RideRequestDto {
 
     private Long id;
 
-    private Point pickupLocation;
+    private PointDto pickupLocation;
 
-    private Point dropoffLocation;
+    private PointDto dropoffLocation;
 
     private LocalDateTime requestedTime;
 
-    private Rider rider;
+    private RiderDto rider;
 
     private PaymentMethod paymentMethod;
 
     private RideRequestStatus rideRequestStatus;
+
+    private Double fare;
 
 }

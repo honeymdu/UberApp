@@ -1,8 +1,11 @@
 package com.coding.project.uber.uberApp.strategies;
-import com.coding.project.uber.uberApp.dto.RideRequestDto;
+
+import com.coding.project.uber.uberApp.enities.RideRequest;
 
 public interface RideFareCalculationStrategy {
 
-    double calculateFare(RideRequestDto rideRequesttDto);
+    public static final double RIDE_FARE_MULTIPLYIER = 10;
+
+    double calculateFare(RideRequest rideRequest);
 
 }

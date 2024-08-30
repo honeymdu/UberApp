@@ -38,7 +38,7 @@ public class Ride {
     private Point dropoffLocation;
 
     @CreationTimestamp
-    private LocalDateTime createdTime;
+    private LocalDateTime startedTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Rider rider;

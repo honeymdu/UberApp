@@ -1,7 +1,6 @@
 package com.coding.project.uber.uberApp.enities;
 
 import org.locationtech.jts.geom.Point;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,7 +30,9 @@ public class Driver {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private Boolean isAvailable;
+    private Boolean available;
+
+    private String vehicleId;
     
     @Column(columnDefinition = "Geometry(Point,4326)")
     private Point currentLocation;
