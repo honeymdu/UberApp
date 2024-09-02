@@ -1,5 +1,6 @@
 package com.coding.project.uber.uberApp.services.impl;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 
 import org.modelmapper.ModelMapper;
@@ -36,6 +37,7 @@ public class RideServiceImpl implements RideService {
         ride.setRideStatus(RideStatus.CONFIRMED);
         ride.setOtp(generateRandomOtp());
         ride.setId(null);
+        ride.setStartedAt(LocalDateTime.now());
         rideRequestService.updateRideRequest(rideRequest);
         return rideRepository.save(ride);
     }

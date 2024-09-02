@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.coding.project.uber.uberApp.dto.DriverDto;
@@ -54,8 +55,18 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public RideDto cancelRide(Long rideId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'cancelRide'");
+        Ride ride = rideService.getRideById(rideId);
+        Driver driver = getCurrentDriver();
+        if (!driver.equals(ride.getDriver())) {
+            throw new RuntimeException("Driver can not cancel ride as he not accept it earlier");
+        }
+        if (!ride.getRideStatus().equals(RideStatus.CONFIRMED)) {
+            throw new RuntimeException("Ride can not be canceled , Invalid Status " + ride.getRideStatus());
+        }
+        Ride canceledRide = rideService.updateRideStatus(ride, RideStatus.CANCELLED);
+        updateDriverAvailability(driver, true);
+        return modelMapper.map(canceledRide, RideDto.class);
+
     }
 
     @Override
@@ -70,7 +81,7 @@ public class DriverServiceImpl implements DriverService {
             throw new RuntimeException(
                     "Ride Status not Confirmed Hence can not be started, Status =" + ride.getRideStatus());
         }
-        if (rideStartDto.getOtp().equals(ride.getOtp())) {
+        if (!rideStartDto.getOtp().equals(ride.getOtp())) {
             throw new RuntimeException("Otp is not correct");
         }
         ride.setStartedTime(LocalDateTime.now());
@@ -80,8 +91,19 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public RideDto endRide(Long rideId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'endRide'");
+        Ride ride = rideService.getRideById(rideId);
+        Driver driver = getCurrentDriver();
+        if (!driver.equals(ride.getDriver())) {
+            throw new RuntimeException("Driver can not end ride as he not accept it earlier");
+        }
+        if (!ride.getRideStatus().equals(RideStatus.ONGOING)) {
+            throw new RuntimeException(
+                    "Ride can not be ended, Invalid Status =" + ride.getRideStatus());
+        }
+        ride.setEndedAt(LocalDateTime.now());
+        updateDriverAvailability(driver, true);
+        Ride endedRide = rideService.updateRideStatus(ride, RideStatus.ENDED);
+        return modelMapper.map(endedRide, RideDto.class);
     }
 
     @Override
@@ -92,14 +114,8 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public DriverDto getmyprofile() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getmyprofile'");
-    }
-
-    @Override
-    public List<RideDto> getAllMyRides() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllMyRides'");
+        Driver driver = getCurrentDriver();
+        return modelMapper.map(driver, DriverDto.class);
     }
 
     @Override
@@ -107,6 +123,17 @@ public class DriverServiceImpl implements DriverService {
         // Implement by Spring Security
         return driverRepository.findById(2L)
                 .orElseThrow(() -> new ResourceNotFoundException("Driver Not Found with Id " + 2));
+    }
+
+    @Override
+    public Driver updateDriverAvailability(Driver driver, boolean available) {
+        driver.setAvailable(available);
+        return driverRepository.save(driver);
+    }
+
+    @Override
+    public List<RideDto> getAllMyRides(PageRequest pageRequest) {
+       return null;
     }
 
 }

@@ -29,7 +29,7 @@ public class RideDto {
 
     private Double fare;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime startedAt;
 
     private LocalDateTime endedAt;
 
