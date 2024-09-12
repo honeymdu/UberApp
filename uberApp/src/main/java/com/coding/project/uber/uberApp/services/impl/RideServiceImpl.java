@@ -7,11 +7,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import com.coding.project.uber.uberApp.dto.RideRequestDto;
 import com.coding.project.uber.uberApp.enities.Driver;
 import com.coding.project.uber.uberApp.enities.Ride;
 import com.coding.project.uber.uberApp.enities.RideRequest;
+import com.coding.project.uber.uberApp.enities.Rider;
 import com.coding.project.uber.uberApp.enities.enums.RideRequestStatus;
 import com.coding.project.uber.uberApp.enities.enums.RideStatus;
 import com.coding.project.uber.uberApp.exceptions.ResourceNotFoundException;
@@ -49,27 +48,13 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public void matchWithDrivers(RideRequestDto requestDto) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'matchWithDrivers'");
+    public Page<Ride> getAllRidesOfRider(Rider rider, PageRequest pageRequest) {
+        return rideRepository.findByRider(rider, pageRequest);
     }
 
     @Override
-    public Ride updateRideStatus(Long rideId, RideStatus rideStatus) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateRideStatus'");
-    }
-
-    @Override
-    public Page<Ride> getAllRidesOfRider(Long riderId, PageRequest pageRequest) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllRidesOfRider'");
-    }
-
-    @Override
-    public Page<Ride> getAllRidesOfDriver(Long driverId, PageRequest pageRequest) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllRidesOfDriver'");
+    public Page<Ride> getAllRidesOfDriver(Driver driver, PageRequest pageRequest) {
+        return rideRepository.findByDriver(driver, pageRequest);
     }
 
     private String generateRandomOtp() {

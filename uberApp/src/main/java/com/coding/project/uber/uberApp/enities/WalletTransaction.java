@@ -8,13 +8,17 @@ import com.coding.project.uber.uberApp.enities.enums.TransactionMethod;
 import com.coding.project.uber.uberApp.enities.enums.TransactionType;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +26,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Table(indexes = {
+        @Index(name = "idx_Wallet_transaction_wallet", columnList = "wallet"),
+        @Index(name = "idx_Wallet_transaction_ride", columnList = "ride_id")
+})
 public class WalletTransaction {
 
     @Id
@@ -30,11 +39,13 @@ public class WalletTransaction {
 
     private Double Amount;
 
+    @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
+    @Enumerated(EnumType.STRING)
     private TransactionMethod transactionMethod;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Ride ride;
 
     private String TransactionId;

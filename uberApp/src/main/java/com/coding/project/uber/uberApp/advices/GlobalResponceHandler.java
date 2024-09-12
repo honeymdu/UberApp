@@ -1,5 +1,7 @@
 package com.coding.project.uber.uberApp.advices;
 
+import java.util.List;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -14,7 +16,7 @@ public class GlobalResponceHandler implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-       return true;
+        return true;
     }
 
     @Override
@@ -22,11 +24,16 @@ public class GlobalResponceHandler implements ResponseBodyAdvice<Object> {
     public Object beforeBodyWrite(@Nullable Object body, MethodParameter returnType, MediaType selectedContentType,
             Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
             ServerHttpResponse response) {
-        
-            if(body instanceof ApiResponce<?>)
+
+        List<String> allowedsRouts = List.of("/v3/api-docs", "/actuator");
+
+        boolean IsallowedsRouts = allowedsRouts.stream()
+                .anyMatch(route -> request.getURI().getPath().contains(route));
+
+        if (body instanceof ApiResponce<?> || IsallowedsRouts)
             return body;
 
-           return new ApiResponce<>(body);
+        return new ApiResponce<>(body);
     }
 
 }

@@ -24,7 +24,7 @@ public class Wallet {
 
     private Double Balance;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY ,optional = false)
     private User user;
 
     @OneToMany(mappedBy = "wallet",fetch = FetchType.LAZY)
