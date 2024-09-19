@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Table(indexes = {
-        @Index(name = "idx_Wallet_transaction_wallet", columnList = "wallet"),
+        @Index(name = "idx_Wallet_transaction_wallet", columnList = "wallet_id"),
         @Index(name = "idx_Wallet_transaction_ride", columnList = "ride_id")
 })
 public class WalletTransaction {

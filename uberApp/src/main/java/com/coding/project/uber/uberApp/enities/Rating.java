@@ -19,8 +19,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Table(indexes = {
-        @Index(name = "idx_rating_rider", columnList = "rider"),
-        @Index(name = "idx_rating_driver", columnList = "driver")
+        @Index(name = "idx_rating_rider", columnList = "rider_id"),
+        @Index(name = "idx_rating_driver", columnList = "driver_id")
 })
 public class Rating {
 

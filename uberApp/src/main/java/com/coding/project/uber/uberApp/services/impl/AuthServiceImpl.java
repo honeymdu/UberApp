@@ -3,6 +3,10 @@ package com.coding.project.uber.uberApp.services.impl;
 import java.util.Set;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.coding.project.uber.uberApp.dto.DriverDto;
@@ -14,6 +18,7 @@ import com.coding.project.uber.uberApp.enities.enums.Role;
 import com.coding.project.uber.uberApp.exceptions.ResourceNotFoundException;
 import com.coding.project.uber.uberApp.exceptions.RuntimeConfilictException;
 import com.coding.project.uber.uberApp.repositories.UserRepository;
+import com.coding.project.uber.uberApp.security.JWTService;
 import com.coding.project.uber.uberApp.services.AuthService;
 import com.coding.project.uber.uberApp.services.DriverService;
 import com.coding.project.uber.uberApp.services.RiderService;
@@ -31,21 +36,22 @@ public class AuthServiceImpl implements AuthService {
     private final RiderService riderService;
     private final WalletService walletService;
     private final DriverService driverService;
-
-    @Override
-    public String login(String email, String password) {
-        return null;
-    }
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JWTService jwtService;
+    private final UserService userService;
 
     @Override
     @Transactional
     public UserDto signup(SignupDto signupDto) {
-        userRepository.findByEmail(signupDto.getEmail()).orElseThrow(
-                () -> new RuntimeConfilictException(
-                        "Cannot SignUp, User Already Exists with Email " + signupDto.getEmail()));
+        User user = userRepository.findByEmail(signupDto.getEmail()).orElse(null);
+        if (user != null)
+            throw new RuntimeConfilictException(
+                    "Cannot signup, User already exists with email " + signupDto.getEmail());
 
         User Mappeduser = modelMapper.map(signupDto, User.class);
         Mappeduser.setRoles(Set.of(Role.RIDER));
+        Mappeduser.setPassword(passwordEncoder.encode(signupDto.getPassword()));
         User savedUser = userRepository.save(Mappeduser);
         riderService.CreateNewRider(savedUser);
         walletService.createNewWallet(savedUser);
@@ -63,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
 
         Driver driver = Driver.builder()
                 .user(user).rating(0.0)
-                .vehicleId(null)
+                .vehicleId(vehicleId)
                 .available(true)
                 .build();
 
@@ -71,6 +77,24 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
         Driver savedDriver = driverService.CreateNewDriver(driver);
         return modelMapper.map(savedDriver, DriverDto.class);
+    }
+
+    @Override
+    public String[] login(String email, String password) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, password));
+        User user = (User) authentication.getPrincipal();
+        String AccessToken = jwtService.GenerateAccessToken(user);
+        String RefreshToken = jwtService.GenerateRefreshToken(user);
+        return new String[] { AccessToken, RefreshToken };
+    }
+
+    @Override
+    public String refreshToken(String refreshToken) {
+        Long UserId = jwtService.getUserIdFromToken(refreshToken);
+        // sessionService.ValidateSession(refreshToken);
+        User user = userService.getUserFromId(UserId);
+        return jwtService.GenerateAccessToken(user);
     }
 
 }
