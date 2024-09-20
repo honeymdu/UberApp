@@ -19,7 +19,8 @@ import lombok.RequiredArgsConstructor;
 @EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
 
-        private static final String[] PUBLIC_ROUTES = { "/auth/**" };
+        private static final String[] PUBLIC_ROUTES = { "/auth/**", "/v3/api-docs/**", "/swagger-ui.html",
+                        "/swagger-ui/**" };
 
         private final JWTAuthFilter jwtAuthFilter;
 
