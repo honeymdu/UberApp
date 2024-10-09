@@ -14,11 +14,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @RestControllerAdvice
 public class GlobalResponceHandler implements ResponseBodyAdvice<Object> {
 
+    @SuppressWarnings("null")
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         return true;
     }
 
+    @SuppressWarnings("null")
     @Override
     @Nullable
     public Object beforeBodyWrite(@Nullable Object body, MethodParameter returnType, MediaType selectedContentType,

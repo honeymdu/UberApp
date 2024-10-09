@@ -15,6 +15,7 @@ public class DistanceServiceOSRMImpl implements DistanceService {
 
     private static final String OSRM_API_BASE_URL = "https://router.project-osrm.org/route/v1/driving/";
 
+    @SuppressWarnings("null")
     @Override
     public double CalculateDistance(Point src, Point dest) {
         try {
